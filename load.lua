@@ -270,6 +270,12 @@ end
 
 local function createIconSlot(parent, theme, options)
 	local iconOptions = options or {}
+	local iconImage = iconOptions.Icon
+	local shouldCreateSlot = (type(iconImage) == "string" and iconImage ~= "") or iconOptions.ShowIconSlot == true
+
+	if not shouldCreateSlot then
+		return 8, nil
+	end
 
 	local iconSlot = Instance.new("Frame")
 	iconSlot.Name = "IconSlot"
@@ -279,7 +285,6 @@ local function createIconSlot(parent, theme, options)
 	iconSlot.BackgroundTransparency = 1
 	iconSlot.BorderSizePixel = 0
 
-	local iconImage = iconOptions.Icon
 	if type(iconImage) == "string" and iconImage ~= "" then
 		local image = Instance.new("ImageLabel")
 		image.Name = "Icon"
