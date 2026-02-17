@@ -279,9 +279,6 @@ local function createIconSlot(parent, theme, options)
 	iconSlot.BackgroundTransparency = 1
 	iconSlot.BorderSizePixel = 0
 
-	local slotStroke = makeStroke(iconSlot, theme.Border)
-	slotStroke.Transparency = 0.25
-
 	local iconImage = iconOptions.Icon
 	if type(iconImage) == "string" and iconImage ~= "" then
 		local image = Instance.new("ImageLabel")
@@ -295,7 +292,7 @@ local function createIconSlot(parent, theme, options)
 		image.ImageColor3 = iconOptions.IconColor or theme.Icon
 	end
 
-	return 30, iconSlot
+	return 26, iconSlot
 end
 
 Library.Defaults = {
@@ -654,9 +651,9 @@ function Tab:CreateGroupbox(title, options)
 	local window, parent, theme, fonts, gradients = getComponentContext(self)
 	local cleanName = sanitizeName(title, "Groupbox")
 	local sidePadding = options.Padding or 10
-	local contentTopPadding = options.ContentTopPadding or 10
-	local contentBottomPadding = options.ContentBottomPadding or 10
-	local topInset = options.TopInset or 12
+	local contentTopPadding = options.ContentTopPadding or 8
+	local contentBottomPadding = options.ContentBottomPadding or 8
+	local topInset = options.TopInset or 10
 
 	local groupFrame = Instance.new("Frame")
 	groupFrame.Name = "Groupbox_" .. cleanName
@@ -669,7 +666,6 @@ function Tab:CreateGroupbox(title, options)
 
 	local groupStroke = makeStroke(groupFrame, theme.Border)
 	makeGradient(groupFrame, gradients.Groupbox, theme.Surface, theme.Background)
-	window:_trackHover(groupFrame, groupStroke, theme.Border, theme.HoverBorder)
 
 	attachBorderCutoutTitle(groupFrame, title, fonts.Header, 13, theme, sidePadding)
 
@@ -755,12 +751,12 @@ function Tab:CreateButton(text, callback, options)
 	label.TextXAlignment = Enum.TextXAlignment.Left
 
 	window:_trackConnection(button.MouseButton1Click:Connect(function()
-		tween(buttonStroke, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-			Color = theme.ActiveBorder,
+		tween(button, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			BackgroundColor3 = theme.Background,
 		})
 		task.wait(0.05)
-		tween(buttonStroke, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-			Color = theme.ButtonBorder,
+		tween(button, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			BackgroundColor3 = theme.ItemBackground,
 		})
 		safeCallback(callback)
 	end))
