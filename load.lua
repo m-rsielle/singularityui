@@ -1,173 +1,68 @@
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local TextService = game:GetService("TextService")
 
 local Library = {}
 
 local BaseTheme = {
-	Background = Color3.fromRGB(10, 10, 10),
-	Surface = Color3.fromRGB(16, 16, 16),
-	Topbar = Color3.fromRGB(20, 20, 20),
-	Inset = Color3.fromRGB(9, 9, 9),
-	Border = Color3.fromRGB(62, 62, 62),
-	HoverBorder = Color3.fromRGB(92, 92, 92),
-	ActiveBorder = Color3.fromRGB(138, 138, 138),
-	Accent = Color3.fromRGB(255, 255, 255),
-	TextMuted = Color3.fromRGB(198, 198, 198),
-	SecondaryText = Color3.fromRGB(154, 154, 154),
-	PlaceholderText = Color3.fromRGB(148, 148, 148),
-	ButtonText = Color3.fromRGB(8, 8, 8),
-	ButtonBorder = Color3.fromRGB(36, 36, 36),
+	Background = Color3.fromRGB(5, 5, 5),
+	Surface = Color3.fromRGB(8, 8, 8),
+	Topbar = Color3.fromRGB(5, 5, 5),
+	Sidebar = Color3.fromRGB(7, 7, 7),
+	Inset = Color3.fromRGB(15, 15, 15),
+	ItemBackground = Color3.fromRGB(15, 15, 15),
+	Border = Color3.fromRGB(40, 40, 40),
+	HoverBorder = Color3.fromRGB(58, 58, 58),
+	ActiveBorder = Color3.fromRGB(160, 230, 240),
+	Accent = Color3.fromRGB(160, 230, 240),
+	TextMuted = Color3.fromRGB(200, 200, 200),
+	SecondaryText = Color3.fromRGB(120, 120, 120),
+	PlaceholderText = Color3.fromRGB(120, 120, 120),
+	ButtonText = Color3.fromRGB(200, 200, 200),
+	ButtonBorder = Color3.fromRGB(40, 40, 40),
+	Icon = Color3.fromRGB(120, 120, 120),
 }
 
 local BaseFonts = {
 	Header = Enum.Font.GothamBold,
-	Code = Enum.Font.Code,
+	Nav = Enum.Font.Gotham,
+	Item = Enum.Font.RobotoMono,
+	Code = Enum.Font.RobotoMono,
 }
 
 local BaseConfig = {
 	Name = "SingularityWindow",
-	Title = "SINGULARITY UI",
-	Subtitle = "SYSTEM CONTROL",
-	Size = UDim2.fromOffset(780, 500),
+	Title = "SINGULARITY // CORE",
+	Subtitle = "SYSTEM UTILITY",
+	Size = UDim2.fromOffset(820, 520),
 	Position = UDim2.fromScale(0.5, 0.5),
-	TopbarHeight = 44,
-	TabRailWidth = 170,
+	TopbarHeight = 40,
+	TabRailWidth = 180,
+	ItemHeight = 30,
 	MenuBind = Enum.KeyCode.RightControl,
 	Visible = true,
 }
 
+-- Gradients are optional, but disabled by default for the Juju Live minimalist look.
 local BaseGradients = {
-	Enabled = true,
-	Main = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(232, 232, 232)},
-		Rotation = 90,
-	},
-	TopBar = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(240, 240, 240)},
-		Rotation = 0,
-	},
-	Body = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(236, 236, 236)},
-		Rotation = 90,
-	},
-	TabRail = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(228, 228, 228)},
-		Rotation = 90,
-	},
-	Page = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(238, 238, 238)},
-		Rotation = 90,
-	},
-	TabButton = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(236, 236, 236)},
-		Rotation = 90,
-	},
-	Section = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(236, 236, 236)},
-		Rotation = 90,
-	},
-	Groupbox = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(232, 232, 232)},
-		Rotation = 90,
-	},
-	GroupboxHeader = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(236, 236, 236)},
-		Rotation = 90,
-	},
-	AccentButton = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(245, 245, 245)},
-		Rotation = 90,
-	},
-	Input = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(230, 230, 230)},
-		Rotation = 90,
-	},
-	ToggleRow = {
-		Enabled = true,
-		Color = {Color3.fromRGB(255, 255, 255), Color3.fromRGB(236, 236, 236)},
-		Rotation = 90,
-	},
+	Enabled = false,
+	Main = {Enabled = false},
+	TopBar = {Enabled = false},
+	Topbar = {Enabled = false},
+	Body = {Enabled = false},
+	TabRail = {Enabled = false},
+	Sidebar = {Enabled = false},
+	Page = {Enabled = false},
+	Section = {Enabled = false},
+	Groupbox = {Enabled = false},
+	GroupboxHeader = {Enabled = false},
+	AccentButton = {Enabled = false},
+	Input = {Enabled = false},
+	ToggleRow = {Enabled = false},
+	TabButton = {Enabled = false},
+	Item = {Enabled = false},
 }
-
-local function toLinear(channel)
-	if channel <= 0.03928 then
-		return channel / 12.92
-	end
-	return ((channel + 0.055) / 1.055) ^ 2.4
-end
-
-local function luminance(color)
-	return (0.2126 * toLinear(color.R)) + (0.7152 * toLinear(color.G)) + (0.0722 * toLinear(color.B))
-end
-
-local function contrastRatio(a, b)
-	local lumA = luminance(a)
-	local lumB = luminance(b)
-	local lighter = math.max(lumA, lumB)
-	local darker = math.min(lumA, lumB)
-	return (lighter + 0.05) / (darker + 0.05)
-end
-
-local function readableColor(foreground, background, minimumRatio, fallback)
-	local fg = if typeof(foreground) == "Color3" then foreground else fallback
-	local bg = if typeof(background) == "Color3" then background else Color3.new(0, 0, 0)
-	local minRatio = minimumRatio or 4.5
-	local default = if typeof(fallback) == "Color3" then fallback else Color3.new(1, 1, 1)
-
-	if contrastRatio(fg, bg) >= minRatio then
-		return fg
-	end
-
-	if contrastRatio(default, bg) >= minRatio then
-		return default
-	end
-
-	local best = fg
-	local bestRatio = contrastRatio(fg, bg)
-	for i = 1, 20 do
-		local t = i / 20
-		local towardWhite = fg:Lerp(Color3.new(1, 1, 1), t)
-		local ratioWhite = contrastRatio(towardWhite, bg)
-		if ratioWhite > bestRatio then
-			best = towardWhite
-			bestRatio = ratioWhite
-		end
-
-		local towardBlack = fg:Lerp(Color3.new(0, 0, 0), t)
-		local ratioBlack = contrastRatio(towardBlack, bg)
-		if ratioBlack > bestRatio then
-			best = towardBlack
-			bestRatio = ratioBlack
-		end
-	end
-
-	return best
-end
-
-local function normalizeTheme(theme)
-	-- Keep custom themes readable without forcing a different visual style.
-	theme.Accent = readableColor(theme.Accent, theme.Background, 8, BaseTheme.Accent)
-	theme.TextMuted = readableColor(theme.TextMuted, theme.Background, 4.5, BaseTheme.TextMuted)
-	theme.SecondaryText = readableColor(theme.SecondaryText or theme.TextMuted, theme.Topbar, 3.8, BaseTheme.SecondaryText)
-	theme.PlaceholderText = readableColor(theme.PlaceholderText or theme.SecondaryText, theme.Inset, 3.5, BaseTheme.PlaceholderText)
-	theme.ButtonText = readableColor(theme.ButtonText, theme.Accent, 4.5, BaseTheme.ButtonText)
-	theme.Border = readableColor(theme.Border, theme.Background, 1.8, BaseTheme.Border)
-	theme.HoverBorder = readableColor(theme.HoverBorder, theme.Background, 2.2, BaseTheme.HoverBorder)
-	theme.ActiveBorder = readableColor(theme.ActiveBorder, theme.Background, 2.7, BaseTheme.ActiveBorder)
-	return theme
-end
 
 local function cloneValue(value)
 	if type(value) ~= "table" then
@@ -207,6 +102,17 @@ local function mergeTables(base, overrides)
 	end
 
 	return result
+end
+
+local function normalizeTheme(theme)
+	theme.Sidebar = theme.Sidebar or theme.Surface
+	theme.ItemBackground = theme.ItemBackground or theme.Inset
+	theme.ActiveBorder = theme.ActiveBorder or theme.Accent
+	theme.ButtonText = theme.ButtonText or theme.TextMuted
+	theme.ButtonBorder = theme.ButtonBorder or theme.Border
+	theme.PlaceholderText = theme.PlaceholderText or theme.SecondaryText
+	theme.Icon = theme.Icon or theme.SecondaryText
+	return theme
 end
 
 local function sanitizeName(text, fallback)
@@ -330,6 +236,68 @@ local function resolveGradients(gradientOptions)
 	return gradients
 end
 
+local function splitCallbackAndOptions(callbackOrOptions, options)
+	if type(callbackOrOptions) == "table" and options == nil then
+		return nil, callbackOrOptions
+	end
+	return callbackOrOptions, options or {}
+end
+
+local function measureTextWidth(text, font, textSize)
+	local bounds = TextService:GetTextSize(tostring(text), textSize, font, Vector2.new(1000, 1000))
+	return bounds.X
+end
+
+local function attachBorderCutoutTitle(frame, text, font, textSize, theme, leftPadding)
+	frame.ClipsDescendants = false
+
+	local label = Instance.new("TextLabel")
+	label.Name = "BorderTitle"
+	label.Parent = frame
+	label.BackgroundColor3 = theme.Background
+	label.BorderSizePixel = 0
+	label.Position = UDim2.new(0, leftPadding or 10, 0, -10)
+	label.Size = UDim2.fromOffset(measureTextWidth(text, font, textSize) + 12, 18)
+	label.Font = font
+	label.Text = tostring(text)
+	label.TextColor3 = theme.TextMuted
+	label.TextSize = textSize
+	label.TextXAlignment = Enum.TextXAlignment.Left
+	label.TextYAlignment = Enum.TextYAlignment.Center
+	label.ZIndex = (frame.ZIndex or 1) + 2
+	return label
+end
+
+local function createIconSlot(parent, theme, options)
+	local iconOptions = options or {}
+
+	local iconSlot = Instance.new("Frame")
+	iconSlot.Name = "IconSlot"
+	iconSlot.Parent = parent
+	iconSlot.Position = UDim2.new(0, 8, 0.5, -8)
+	iconSlot.Size = UDim2.fromOffset(16, 16)
+	iconSlot.BackgroundTransparency = 1
+	iconSlot.BorderSizePixel = 0
+
+	local slotStroke = makeStroke(iconSlot, theme.Border)
+	slotStroke.Transparency = 0.25
+
+	local iconImage = iconOptions.Icon
+	if type(iconImage) == "string" and iconImage ~= "" then
+		local image = Instance.new("ImageLabel")
+		image.Name = "Icon"
+		image.Parent = iconSlot
+		image.BackgroundTransparency = 1
+		image.Position = UDim2.new(0, 1, 0, 1)
+		image.Size = UDim2.new(1, -2, 1, -2)
+		image.ScaleType = Enum.ScaleType.Fit
+		image.Image = iconImage
+		image.ImageColor3 = iconOptions.IconColor or theme.Icon
+	end
+
+	return 30, iconSlot
+end
+
 Library.Defaults = {
 	Config = cloneValue(BaseConfig),
 	Theme = cloneValue(BaseTheme),
@@ -351,15 +319,15 @@ function Window:_trackConnection(connection)
 	return connection
 end
 
-function Window:_trackHover(button, stroke, defaultColor, hoverColor)
-	self:_trackConnection(button.MouseEnter:Connect(function()
-		tween(stroke, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+function Window:_trackHover(target, stroke, defaultColor, hoverColor)
+	self:_trackConnection(target.MouseEnter:Connect(function()
+		tween(stroke, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			Color = hoverColor,
 		})
 	end))
 
-	self:_trackConnection(button.MouseLeave:Connect(function()
-		tween(stroke, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+	self:_trackConnection(target.MouseLeave:Connect(function()
+		tween(stroke, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			Color = defaultColor,
 		})
 	end))
@@ -523,23 +491,24 @@ function Window:SelectTab(tabToSelect)
 		local isActive = tab == selected
 		tab._page.Visible = isActive
 
-		tween(tab._button, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-			BackgroundColor3 = if isActive then theme.Topbar else theme.Surface,
-			TextColor3 = if isActive then theme.Accent else theme.TextMuted,
+		tween(tab._label, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			TextColor3 = if isActive then theme.Accent else theme.SecondaryText,
 		})
 
-		tween(tab._buttonStroke, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-			Color = if isActive then theme.ActiveBorder else theme.Border,
+		tween(tab._activeBar, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			BackgroundTransparency = if isActive then 0 else 1,
 		})
 	end
 
 	task.wait()
 end
 
-function Window:CreateTab(name)
+function Window:CreateTab(name, options)
 	if self._destroyed then
 		error("Cannot create tab on a destroyed window.", 2)
 	end
+
+	options = options or {}
 
 	local theme = self._theme
 	local fonts = self._fonts
@@ -555,30 +524,49 @@ function Window:CreateTab(name)
 	local tabButton = Instance.new("TextButton")
 	tabButton.Name = "Tab_" .. cleanName
 	tabButton.Parent = self._tabButtonList
-	tabButton.Size = UDim2.new(1, 0, 0, 34)
-	tabButton.BackgroundColor3 = theme.Surface
+	tabButton.Size = UDim2.new(1, 0, 0, 30)
+	tabButton.BackgroundTransparency = 1
 	tabButton.BorderSizePixel = 0
 	tabButton.AutoButtonColor = false
-	tabButton.Text = tostring(name)
-	tabButton.TextColor3 = theme.TextMuted
-	tabButton.TextSize = 15
-	tabButton.Font = fonts.Code
+	tabButton.Text = ""
 
-	local tabButtonStroke = makeStroke(tabButton, theme.Border)
-	makeGradient(tabButton, gradients.TabButton, theme.Surface, theme.Background)
+	local activeBar = Instance.new("Frame")
+	activeBar.Name = "ActiveBar"
+	activeBar.Parent = tabButton
+	activeBar.BackgroundColor3 = theme.Accent
+	activeBar.BackgroundTransparency = 1
+	activeBar.BorderSizePixel = 0
+	activeBar.Position = UDim2.new(0, 2, 0.5, -7)
+	activeBar.Size = UDim2.new(0, 2, 0, 14)
+
+	local tabLabel = Instance.new("TextLabel")
+	tabLabel.Name = "Label"
+	tabLabel.Parent = tabButton
+	tabLabel.BackgroundTransparency = 1
+	tabLabel.Position = UDim2.new(0, 12, 0, 0)
+	tabLabel.Size = UDim2.new(1, -14, 1, 0)
+	tabLabel.Font = fonts.Nav
+	tabLabel.Text = tostring(name)
+	tabLabel.TextColor3 = theme.SecondaryText
+	tabLabel.TextSize = 14
+	tabLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+	makeGradient(tabButton, gradients.TabButton or gradients.Item, theme.ItemBackground, theme.Background)
 
 	self:_trackConnection(tabButton.MouseEnter:Connect(function()
 		if self._activeTab ~= tab then
-			tween(tabButtonStroke, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-				Color = theme.HoverBorder,
+			tween(tabLabel, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				TextColor3 = theme.TextMuted,
 			})
 		end
 	end))
 
 	self:_trackConnection(tabButton.MouseLeave:Connect(function()
-		tween(tabButtonStroke, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-			Color = if self._activeTab == tab then theme.ActiveBorder else theme.Border,
-		})
+		if self._activeTab ~= tab then
+			tween(tabLabel, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+				TextColor3 = theme.SecondaryText,
+			})
+		end
 	end))
 
 	local tabPage = Instance.new("ScrollingFrame")
@@ -589,7 +577,7 @@ function Window:CreateTab(name)
 	tabPage.Size = UDim2.new(1, 0, 1, 0)
 	tabPage.CanvasSize = UDim2.new(0, 0, 0, 0)
 	tabPage.AutomaticCanvasSize = Enum.AutomaticSize.Y
-	tabPage.ScrollBarThickness = 5
+	tabPage.ScrollBarThickness = 4
 	tabPage.ScrollBarImageColor3 = theme.Border
 	tabPage.Visible = false
 
@@ -597,19 +585,20 @@ function Window:CreateTab(name)
 
 	local pagePadding = Instance.new("UIPadding")
 	pagePadding.Parent = tabPage
-	pagePadding.PaddingTop = UDim.new(0, 12)
-	pagePadding.PaddingBottom = UDim.new(0, 12)
-	pagePadding.PaddingLeft = UDim.new(0, 12)
-	pagePadding.PaddingRight = UDim.new(0, 12)
+	pagePadding.PaddingTop = UDim.new(0, 14)
+	pagePadding.PaddingBottom = UDim.new(0, 14)
+	pagePadding.PaddingLeft = UDim.new(0, 14)
+	pagePadding.PaddingRight = UDim.new(0, 14)
 
 	local pageLayout = Instance.new("UIListLayout")
 	pageLayout.Parent = tabPage
 	pageLayout.FillDirection = Enum.FillDirection.Vertical
 	pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
-	pageLayout.Padding = UDim.new(0, 8)
+	pageLayout.Padding = UDim.new(0, 12)
 
 	tab._button = tabButton
-	tab._buttonStroke = tabButtonStroke
+	tab._label = tabLabel
+	tab._activeBar = activeBar
 	tab._page = tabPage
 	tab._layout = pageLayout
 
@@ -655,7 +644,8 @@ local function getComponentContext(self)
 	local theme = window._theme
 	local fonts = window._fonts
 	local gradients = window._gradients
-	return window, parent, theme, fonts, gradients
+	local config = window._config
+	return window, parent, theme, fonts, gradients, config
 end
 
 function Tab:CreateGroupbox(title, options)
@@ -663,58 +653,30 @@ function Tab:CreateGroupbox(title, options)
 
 	local window, parent, theme, fonts, gradients = getComponentContext(self)
 	local cleanName = sanitizeName(title, "Groupbox")
-	local headerHeight = options.HeaderHeight or 30
 	local sidePadding = options.Padding or 10
-	local contentTopPadding = options.ContentTopPadding or 8
+	local contentTopPadding = options.ContentTopPadding or 10
 	local contentBottomPadding = options.ContentBottomPadding or 10
+	local topInset = options.TopInset or 12
 
 	local groupFrame = Instance.new("Frame")
 	groupFrame.Name = "Groupbox_" .. cleanName
 	groupFrame.Parent = parent
 	groupFrame.Size = UDim2.new(1, 0, 0, 0)
 	groupFrame.AutomaticSize = Enum.AutomaticSize.Y
-	groupFrame.BackgroundColor3 = theme.Surface
+	groupFrame.BackgroundTransparency = 1
 	groupFrame.BorderSizePixel = 0
 	groupFrame.Active = true
 
 	local groupStroke = makeStroke(groupFrame, theme.Border)
-	local groupGradient = gradients.Groupbox or gradients.Section
-	makeGradient(groupFrame, groupGradient, theme.Surface, theme.Background)
+	makeGradient(groupFrame, gradients.Groupbox, theme.Surface, theme.Background)
 	window:_trackHover(groupFrame, groupStroke, theme.Border, theme.HoverBorder)
 
-	local header = Instance.new("Frame")
-	header.Name = "Header"
-	header.Parent = groupFrame
-	header.Position = UDim2.new(0, 0, 0, 0)
-	header.Size = UDim2.new(1, 0, 0, headerHeight)
-	header.BackgroundColor3 = theme.Surface
-	header.BorderSizePixel = 0
-	makeGradient(header, gradients.GroupboxHeader or gradients.Section, theme.Surface, theme.Background)
-
-	local titleLabel = Instance.new("TextLabel")
-	titleLabel.Name = "Title"
-	titleLabel.Parent = header
-	titleLabel.BackgroundTransparency = 1
-	titleLabel.Position = UDim2.new(0, sidePadding, 0, 0)
-	titleLabel.Size = UDim2.new(1, -(sidePadding * 2), 1, 0)
-	titleLabel.Font = fonts.Header
-	titleLabel.Text = tostring(title)
-	titleLabel.TextColor3 = theme.Accent
-	titleLabel.TextSize = 14
-	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-	local headerDivider = Instance.new("Frame")
-	headerDivider.Name = "Divider"
-	headerDivider.Parent = groupFrame
-	headerDivider.Position = UDim2.new(0, sidePadding, 0, headerHeight)
-	headerDivider.Size = UDim2.new(1, -(sidePadding * 2), 0, 1)
-	headerDivider.BackgroundColor3 = theme.Border
-	headerDivider.BorderSizePixel = 0
+	attachBorderCutoutTitle(groupFrame, title, fonts.Header, 13, theme, sidePadding)
 
 	local content = Instance.new("Frame")
 	content.Name = "Content"
 	content.Parent = groupFrame
-	content.Position = UDim2.new(0, sidePadding, 0, headerHeight + 1)
+	content.Position = UDim2.new(0, sidePadding, 0, topInset)
 	content.Size = UDim2.new(1, -(sidePadding * 2), 0, 0)
 	content.AutomaticSize = Enum.AutomaticSize.Y
 	content.BackgroundTransparency = 1
@@ -747,63 +709,58 @@ function Tab:CreateSection(title)
 	local section = Instance.new("Frame")
 	section.Name = "Section_" .. sanitizeName(title, "Section")
 	section.Parent = parent
-	section.Size = UDim2.new(1, 0, 0, 36)
-	section.BackgroundColor3 = theme.Surface
+	section.Size = UDim2.new(1, 0, 0, 22)
+	section.BackgroundTransparency = 1
 	section.BorderSizePixel = 0
+	section.Active = true
 
 	makeStroke(section, theme.Border)
-	makeGradient(section, gradients.Section, theme.Surface, theme.Background)
-
-	local label = Instance.new("TextLabel")
-	label.Name = "Label"
-	label.Parent = section
-	label.BackgroundTransparency = 1
-	label.Position = UDim2.new(0, 10, 0, 0)
-	label.Size = UDim2.new(1, -20, 1, 0)
-	label.Font = fonts.Header
-	label.Text = tostring(title)
-	label.TextColor3 = theme.Accent
-	label.TextSize = 15
-	label.TextXAlignment = Enum.TextXAlignment.Left
-
-	local divider = Instance.new("Frame")
-	divider.Name = "Divider"
-	divider.Parent = section
-	divider.AnchorPoint = Vector2.new(1, 0.5)
-	divider.Position = UDim2.new(1, -10, 0.5, 0)
-	divider.Size = UDim2.new(0.35, 0, 0, 1)
-	divider.BackgroundColor3 = theme.Border
-	divider.BorderSizePixel = 0
+	makeGradient(section, gradients.Section or gradients.Groupbox, theme.Surface, theme.Background)
+	attachBorderCutoutTitle(section, title, fonts.Header, 13, theme, 10)
 
 	return section
 end
 
-function Tab:CreateButton(text, callback)
-	local window, parent, theme, fonts, gradients = getComponentContext(self)
+function Tab:CreateButton(text, callback, options)
+	callback, options = splitCallbackAndOptions(callback, options)
+
+	local window, parent, theme, fonts, gradients, config = getComponentContext(self)
+	local itemHeight = options.Height or config.ItemHeight
 
 	local button = Instance.new("TextButton")
 	button.Name = "Button_" .. sanitizeName(text, "Button")
 	button.Parent = parent
-	button.Size = UDim2.new(1, 0, 0, 36)
-	button.BackgroundColor3 = theme.Accent
+	button.Size = UDim2.new(1, 0, 0, itemHeight)
+	button.BackgroundColor3 = theme.ItemBackground
 	button.BorderSizePixel = 0
 	button.AutoButtonColor = false
-	button.Text = tostring(text)
-	button.TextColor3 = theme.ButtonText
-	button.TextSize = 15
-	button.Font = fonts.Code
+	button.Text = ""
 
 	local buttonStroke = makeStroke(button, theme.ButtonBorder)
-	makeGradient(button, gradients.AccentButton, theme.Accent, Color3.fromRGB(225, 225, 225))
+	makeGradient(button, gradients.AccentButton or gradients.Item, theme.ItemBackground, theme.Background)
 	window:_trackHover(button, buttonStroke, theme.ButtonBorder, theme.HoverBorder)
 
+	local textLeft = createIconSlot(button, theme, options)
+
+	local label = Instance.new("TextLabel")
+	label.Name = "Label"
+	label.Parent = button
+	label.BackgroundTransparency = 1
+	label.Position = UDim2.new(0, textLeft, 0, 0)
+	label.Size = UDim2.new(1, -(textLeft + 8), 1, 0)
+	label.Font = fonts.Item
+	label.Text = tostring(text)
+	label.TextColor3 = theme.ButtonText
+	label.TextSize = 13
+	label.TextXAlignment = Enum.TextXAlignment.Left
+
 	window:_trackConnection(button.MouseButton1Click:Connect(function()
-		tween(button, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-			BackgroundColor3 = Color3.fromRGB(225, 225, 225),
+		tween(buttonStroke, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			Color = theme.ActiveBorder,
 		})
 		task.wait(0.05)
-		tween(button, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-			BackgroundColor3 = theme.Accent,
+		tween(buttonStroke, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			Color = theme.ButtonBorder,
 		})
 		safeCallback(callback)
 	end))
@@ -811,33 +768,38 @@ function Tab:CreateButton(text, callback)
 	return button
 end
 
-function Tab:CreateInput(placeholder, callback)
-	local window, parent, theme, fonts, gradients = getComponentContext(self)
+function Tab:CreateInput(placeholder, callback, options)
+	callback, options = splitCallbackAndOptions(callback, options)
+
+	local window, parent, theme, fonts, gradients, config = getComponentContext(self)
+	local itemHeight = options.Height or config.ItemHeight
 
 	local holder = Instance.new("Frame")
 	holder.Name = "Input_" .. sanitizeName(placeholder, "Input")
 	holder.Parent = parent
-	holder.Size = UDim2.new(1, 0, 0, 38)
+	holder.Size = UDim2.new(1, 0, 0, itemHeight)
 	holder.BackgroundColor3 = theme.Inset
 	holder.BorderSizePixel = 0
 	holder.Active = true
 
 	local holderStroke = makeStroke(holder, theme.Border)
-	makeGradient(holder, gradients.Input, theme.Inset, theme.Background)
+	makeGradient(holder, gradients.Input or gradients.Item, theme.Inset, theme.Background)
 	window:_trackHover(holder, holderStroke, theme.Border, theme.HoverBorder)
+
+	local textLeft = createIconSlot(holder, theme, options)
 
 	local input = Instance.new("TextBox")
 	input.Name = "TextBox"
 	input.Parent = holder
 	input.BackgroundTransparency = 1
-	input.Position = UDim2.new(0, 10, 0, 0)
-	input.Size = UDim2.new(1, -20, 1, 0)
-	input.Font = fonts.Code
-	input.Text = ""
+	input.Position = UDim2.new(0, textLeft, 0, 0)
+	input.Size = UDim2.new(1, -(textLeft + 8), 1, 0)
+	input.Font = fonts.Item
+	input.Text = options.DefaultText or ""
 	input.PlaceholderText = tostring(placeholder)
-	input.TextColor3 = theme.Accent
+	input.TextColor3 = theme.TextMuted
 	input.PlaceholderColor3 = theme.PlaceholderText
-	input.TextSize = 15
+	input.TextSize = 13
 	input.ClearTextOnFocus = false
 	input.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -857,27 +819,32 @@ function Tab:CreateInput(placeholder, callback)
 	return input
 end
 
-function Tab:CreateToggle(text, callback)
-	local window, parent, theme, fonts, gradients = getComponentContext(self)
+function Tab:CreateToggle(text, callback, options)
+	callback, options = splitCallbackAndOptions(callback, options)
+
+	local window, parent, theme, fonts, gradients, config = getComponentContext(self)
+	local itemHeight = options.Height or config.ItemHeight
 
 	local row = Instance.new("TextButton")
 	row.Name = "Toggle_" .. sanitizeName(text, "Toggle")
 	row.Parent = parent
-	row.Size = UDim2.new(1, 0, 0, 36)
-	row.BackgroundColor3 = theme.Surface
+	row.Size = UDim2.new(1, 0, 0, itemHeight)
+	row.BackgroundColor3 = theme.ItemBackground
 	row.BorderSizePixel = 0
 	row.AutoButtonColor = false
 	row.Text = ""
 
 	local rowStroke = makeStroke(row, theme.Border)
-	makeGradient(row, gradients.ToggleRow, theme.Surface, theme.Background)
+	makeGradient(row, gradients.ToggleRow or gradients.Item, theme.ItemBackground, theme.Background)
 	window:_trackHover(row, rowStroke, theme.Border, theme.HoverBorder)
+
+	local textLeft = createIconSlot(row, theme, options)
 
 	local checkbox = Instance.new("Frame")
 	checkbox.Name = "Checkbox"
 	checkbox.Parent = row
-	checkbox.Position = UDim2.new(0, 8, 0.5, -9)
-	checkbox.Size = UDim2.new(0, 18, 0, 18)
+	checkbox.Position = UDim2.new(0, textLeft, 0.5, -6)
+	checkbox.Size = UDim2.new(0, 12, 0, 12)
 	checkbox.BackgroundColor3 = theme.Background
 	checkbox.BorderSizePixel = 0
 
@@ -886,8 +853,8 @@ function Tab:CreateToggle(text, callback)
 	local fill = Instance.new("Frame")
 	fill.Name = "Fill"
 	fill.Parent = checkbox
-	fill.Position = UDim2.new(0, 3, 0, 3)
-	fill.Size = UDim2.new(1, -6, 1, -6)
+	fill.Position = UDim2.new(0, 2, 0, 2)
+	fill.Size = UDim2.new(1, -4, 1, -4)
 	fill.BackgroundColor3 = theme.Accent
 	fill.BorderSizePixel = 0
 	fill.BackgroundTransparency = 1
@@ -896,16 +863,16 @@ function Tab:CreateToggle(text, callback)
 	label.Name = "Label"
 	label.Parent = row
 	label.BackgroundTransparency = 1
-	label.Position = UDim2.new(0, 34, 0, 0)
-	label.Size = UDim2.new(1, -42, 1, 0)
+	label.Position = UDim2.new(0, textLeft + 20, 0, 0)
+	label.Size = UDim2.new(1, -(textLeft + 26), 1, 0)
 	label.Text = tostring(text)
-	label.Font = fonts.Code
-	label.TextSize = 15
+	label.Font = fonts.Item
+	label.TextSize = 13
 	label.TextXAlignment = Enum.TextXAlignment.Left
-	label.TextColor3 = theme.Accent
+	label.TextColor3 = theme.TextMuted
 
 	local state = false
-	local function setState(nextState)
+	local function setState(nextState, skipCallback)
 		state = nextState == true
 		tween(fill, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			BackgroundTransparency = if state then 0 else 1,
@@ -913,16 +880,22 @@ function Tab:CreateToggle(text, callback)
 		tween(checkboxStroke, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 			Color = if state then theme.ActiveBorder else theme.Border,
 		})
-		safeCallback(callback, state)
+		if not skipCallback then
+			safeCallback(callback, state)
+		end
 	end
 
 	window:_trackConnection(row.MouseButton1Click:Connect(function()
-		setState(not state)
+		setState(not state, false)
 	end))
+
+	if options.Default ~= nil then
+		setState(options.Default, true)
+	end
 
 	return {
 		Set = function(_, nextState)
-			setState(nextState)
+			setState(nextState, false)
 		end,
 		Get = function()
 			return state
@@ -983,13 +956,13 @@ function Library.CreateWindow(options)
 	topbar.Active = true
 
 	makeStroke(topbar, theme.Border)
-	makeGradient(topbar, gradients.TopBar, theme.Topbar, theme.Surface)
+	makeGradient(topbar, gradients.TopBar or gradients.Topbar, theme.Topbar, theme.Surface)
 
 	local titleLabel = Instance.new("TextLabel")
 	titleLabel.Name = "Title"
 	titleLabel.Parent = topbar
 	titleLabel.BackgroundTransparency = 1
-	titleLabel.Position = UDim2.new(0, 12, 0, 5)
+	titleLabel.Position = UDim2.new(0, 12, 0, 4)
 	titleLabel.Size = UDim2.new(1, -24, 0, 18)
 	titleLabel.Text = config.Title
 	titleLabel.Font = fonts.Header
@@ -1001,11 +974,11 @@ function Library.CreateWindow(options)
 	subtitleLabel.Name = "Subtitle"
 	subtitleLabel.Parent = topbar
 	subtitleLabel.BackgroundTransparency = 1
-	subtitleLabel.Position = UDim2.new(0, 12, 0, 22)
-	subtitleLabel.Size = UDim2.new(1, -24, 0, 16)
+	subtitleLabel.Position = UDim2.new(0, 12, 0, 21)
+	subtitleLabel.Size = UDim2.new(1, -24, 0, 15)
 	subtitleLabel.Text = config.Subtitle
-	subtitleLabel.Font = fonts.Code
-	subtitleLabel.TextSize = 13
+	subtitleLabel.Font = fonts.Item
+	subtitleLabel.TextSize = 12
 	subtitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 	subtitleLabel.TextColor3 = theme.SecondaryText
 
@@ -1020,19 +993,19 @@ function Library.CreateWindow(options)
 	makeGradient(body, gradients.Body, theme.Background, theme.Inset)
 
 	local tabRail = Instance.new("Frame")
-	tabRail.Name = "TabRail"
+	tabRail.Name = "Sidebar"
 	tabRail.Parent = body
 	tabRail.Size = UDim2.new(0, tabRailWidth, 1, 0)
-	tabRail.BackgroundColor3 = theme.Surface
+	tabRail.BackgroundColor3 = theme.Sidebar
 	tabRail.BorderSizePixel = 0
 
 	makeStroke(tabRail, theme.Border)
-	makeGradient(tabRail, gradients.TabRail, theme.Surface, theme.Background)
+	makeGradient(tabRail, gradients.TabRail or gradients.Sidebar, theme.Sidebar, theme.Background)
 
 	local railPadding = Instance.new("UIPadding")
 	railPadding.Parent = tabRail
-	railPadding.PaddingTop = UDim.new(0, 12)
-	railPadding.PaddingBottom = UDim.new(0, 12)
+	railPadding.PaddingTop = UDim.new(0, 10)
+	railPadding.PaddingBottom = UDim.new(0, 10)
 	railPadding.PaddingLeft = UDim.new(0, 8)
 	railPadding.PaddingRight = UDim.new(0, 8)
 
@@ -1046,7 +1019,7 @@ function Library.CreateWindow(options)
 	tabListLayout.Parent = tabButtonList
 	tabListLayout.FillDirection = Enum.FillDirection.Vertical
 	tabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-	tabListLayout.Padding = UDim.new(0, 6)
+	tabListLayout.Padding = UDim.new(0, 4)
 
 	local pageContainer = Instance.new("Frame")
 	pageContainer.Name = "PageContainer"
@@ -1076,6 +1049,7 @@ function Library.CreateWindow(options)
 		_theme = theme,
 		_fonts = fonts,
 		_gradients = gradients,
+		_config = config,
 	}, Window)
 
 	window:_makeDraggable(topbar, main)
